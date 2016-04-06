@@ -39,21 +39,27 @@ public class TFIDFReducer extends Reducer<Text, DocumentFrequencyValue, Text, Te
 				
 		// count and emit tf*idf for query
 		double tfidf=0;
+		double qtfidf=0;
 		
 		if(queryTerm!=null){
-			tfidf = Double.parseDouble(queryTerm.getFrequency().toString()) * idf;
-			context.write(_key, new Text(queryTerm.getDocument() + "\t" + tfidf));
+			qtfidf = Double.parseDouble(queryTerm.getFrequency().toString()) * idf;
+//			context.write(_key, new Text(queryTerm.getDocument() + "\t" + qtfidf));
 		}else{
 			//if not a query term
 			return;
 		}
 		
 		// count and emit tf*idf for documents
+//		for (DocumentFrequencyValue val : documentList) {
+//			tfidf = Double.parseDouble(val.getFrequency().toString()) * idf;
+//			context.write(_key, new Text(val.getDocument() + "\t" + tfidf));
+//		}
+
+		// count and emit document_term(tf*idf)*query_term(tf*idf) for documents
 		for (DocumentFrequencyValue val : documentList) {
 			tfidf = Double.parseDouble(val.getFrequency().toString()) * idf;
-			context.write(_key, new Text(val.getDocument() + "\t" + tfidf));
+			context.write(_key, new Text(val.getDocument() + "\t" + (tfidf*qtfidf)));
 		}
-
 		
 		
 		
