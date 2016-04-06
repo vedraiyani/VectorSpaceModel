@@ -48,7 +48,9 @@ public class StartModel {
 
 		Path IPDIR = new Path(args[0]);
 		Path OPDIR = new Path(args[1]);
+		Path QUERYPATH = new Path("/home/ved/query/q");
 		FileInputFormat.addInputPath(tfJob, IPDIR);
+		FileInputFormat.addInputPath(tfJob, QUERYPATH);
 		FileOutputFormat.setOutputPath(tfJob, OPDIR);// Delete output if exists
 		FileSystem hdfs = FileSystem.get(conf);
 		if (hdfs.exists(OPDIR)) {
