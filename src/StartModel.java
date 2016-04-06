@@ -9,6 +9,9 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import com.nitrkl.bd.sc.DocumentQueryTFIDFValue;
+import com.nitrkl.bd.sc.SCMapper;
+import com.nitrkl.bd.sc.SCReducer;
 import com.nitrkl.bd.tf.TFMapper;
 import com.nitrkl.bd.tf.TFReducer;
 import com.nitrkl.bd.tf.TermDocumentKey;
@@ -25,7 +28,7 @@ public class StartModel {
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration(true);
 
-		if (args.length != 3) {
+		if (args.length != 4) {
 			// TODO: add package with class name, set proper argument TAG by ved
 			System.out.println("run: hadoop jar VectorSpaceModel.jar " + TAG + " <ip dir> <op dir>");
 			return;
@@ -93,9 +96,37 @@ public class StartModel {
 				TFIDFReducer.TOTAL_IP_DOCS++;
 			}
 		}
-		System.out.println("Total Documents : "+TFIDFReducer.TOTAL_IP_DOCS);
+		System.out.println("Total Documents : " + TFIDFReducer.TOTAL_IP_DOCS);
 		// Execute TF job
 		code = tfidfJob.waitForCompletion(true) ? 0 : 1;
+
+		// job 3
+		Job scJob = Job.getInstance(conf, "SC counting");
+		scJob.setJarByClass(TFIDFMapper.class);
+		// specify mapper
+		scJob.setMapperClass(SCMapper.class);
+		// specify output types
+		scJob.setMapOutputKeyClass(Text.class);
+		scJob.setMapOutputValueClass(Text.class);
+		// specify reducer
+		scJob.setReducerClass(SCReducer.class);
+		// specify output types
+		scJob.setOutputKeyClass(Text.class);
+		scJob.setOutputValueClass(Text.class);
+
+		// specify input and output DIRECTORIES (not files)
+
+		IPDIR = OPDIR;
+		OPDIR = new Path(args[3]);
+		FileInputFormat.addInputPath(scJob, IPDIR);
+		FileOutputFormat.setOutputPath(scJob, OPDIR);// Delete output if
+														// exists
+		if (hdfs.exists(OPDIR)) {
+			hdfs.delete(OPDIR, true);
+		}
+
+		// Execute SC job
+		code = scJob.waitForCompletion(true) ? 0 : 1;
 
 		System.exit(code);
 	}
