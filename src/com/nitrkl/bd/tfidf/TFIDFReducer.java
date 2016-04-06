@@ -8,29 +8,44 @@ import java.util.Set;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-import com.sun.xml.bind.v2.schemagen.xmlschema.List;
-
 public class TFIDFReducer extends Reducer<Text, DocumentFrequencyValue, Text, Text> {
 	public static int TOTAL_IP_DOCS = 0;
 
-	public void reduce(Text _key, Iterable<DocumentFrequencyValue> values, Context context) throws IOException, InterruptedException {
-		// process values
-		Set<Text> documents = new HashSet<>();
-		Iterable<DocumentFrequencyValue> valuesIterable=values;
-		ArrayList<DocumentFrequencyValue> l=new ArrayList<>();
+	public void reduce(Text _key, Iterable<DocumentFrequencyValue> values, Context context)
+			throws IOException, InterruptedException {
+
+//		Set<String> documents = new HashSet<>();
+
+		ArrayList<DocumentFrequencyValue> documentList = new ArrayList<>();
+		
+		DocumentFrequencyValue queryTerm=null;
+		
+		// count document frequency
 		for (DocumentFrequencyValue val : values) {
-			documents.add(val.getDocument());
-			l.add(val);
+			String document = val.getDocument().toString();
+			String frequency = val.getFrequency().toString();
+			if (!document.equals("q")) {
+				documentList.add(new DocumentFrequencyValue(document, frequency));
+//				documents.add(val.getDocument().toString());
+			}else{
+				queryTerm=new DocumentFrequencyValue(document, frequency);
+			}
 		}
 		
-		
-		double idf=Math.log10((double)TOTAL_IP_DOCS / documents.size());
-		for (DocumentFrequencyValue val : l) {
-			double tfidf= Double.parseDouble(val.getFrequency().toString())*idf;
-			context.write(_key,new Text(val.getDocument()+"\t"+tfidf));
+		// count idf
+		double idf = Math.log10((double) TOTAL_IP_DOCS / documentList.size());
+
+		// count and emit tf*idf
+		for (DocumentFrequencyValue val : documentList) {
+			double tfidf = Double.parseDouble(val.getFrequency().toString()) * idf;
+			context.write(_key, new Text(val.getDocument() + "\t" + tfidf));
 		}
-		// idf of term
-		context.write(_key, new Text(documents.size() + " " +idf));
+
+		
+		
+		
+		// emit df and idf of term
+		// context.write(_key, new Text(documents.size() + " " +idf));
 	}
 
 }
