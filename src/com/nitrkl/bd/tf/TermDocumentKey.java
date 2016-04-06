@@ -7,14 +7,14 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
-public class TermDocumentWritable implements WritableComparable<TermDocumentWritable> {
+public class TermDocumentKey implements WritableComparable<TermDocumentKey> {
 	private Text document;
 	private Text term;
-	public TermDocumentWritable() {
+	public TermDocumentKey() {
 		document=new Text();
 		term=new Text();
 	}
-	public TermDocumentWritable(Text document, Text term) {
+	public TermDocumentKey(Text document, Text term) {
 		super();
 		this.document = document;
 		this.term = term;
@@ -25,11 +25,17 @@ public class TermDocumentWritable implements WritableComparable<TermDocumentWrit
 	public void setDocument(Text document) {
 		this.document = document;
 	}
+	public void setDocumentAsString(String document) {
+		this.document = new Text(document);
+	}
 	public Text getTerm() {
 		return term;
 	}
 	public void setTerm(Text term) {
 		this.term = term;
+	}
+	public void setTermAsString(String term) {
+		this.term = new Text(term);
 	}
 	public void write(DataOutput out) throws IOException {
 		term.write(out);
@@ -41,7 +47,7 @@ public class TermDocumentWritable implements WritableComparable<TermDocumentWrit
 		document.readFields(in);
 	}
 
-	public int compareTo(TermDocumentWritable o) {
+	public int compareTo(TermDocumentKey o) {
 		if(term.compareTo(o.term) == 0) return document.compareTo(o.document);
 		else return term.compareTo(o.term);
 	}
@@ -64,7 +70,7 @@ public class TermDocumentWritable implements WritableComparable<TermDocumentWrit
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TermDocumentWritable other = (TermDocumentWritable) obj;
+		TermDocumentKey other = (TermDocumentKey) obj;
 		if (document == null) {
 			if (other.document != null)
 				return false;
