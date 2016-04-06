@@ -1,23 +1,29 @@
-package com.nitrkl.bd.tf;
+package com.nitrkl.bd.tfidf;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 
-public class TermDocumentKey implements WritableComparable<TermDocumentKey> {
+public class DocumentFrequencyValue implements Writable {
 	private Text document;
-	private Text term;
-	public TermDocumentKey() {
+	private Text frequency;
+	public DocumentFrequencyValue() {
 		document=new Text();
-		term=new Text();
+		frequency=new Text();
 	}
-	public TermDocumentKey(Text document, Text term) {
+	public DocumentFrequencyValue(Text document, Text frequency) {
 		super();
 		this.document = document;
-		this.term = term;
+		this.frequency = frequency;
+	}
+	public DocumentFrequencyValue(String document, String frequency) {
+		super();
+		this.document = new Text(document);
+		this.frequency = new Text(frequency);
 	}
 	public Text getDocument() {
 		return document;
@@ -28,28 +34,28 @@ public class TermDocumentKey implements WritableComparable<TermDocumentKey> {
 	public void setDocumentAsString(String document) {
 		this.document = new Text(document);
 	}
-	public Text getTerm() {
-		return term;
+	public Text getFrequency() {
+		return frequency;
 	}
-	public void setTerm(Text term) {
-		this.term = term;
+	public void setFrequency(Text frequency) {
+		this.frequency = frequency;
 	}
-	public void setTermAsString(String term) {
-		this.term = new Text(term);
+	public void setFrequencyAsString(String frequency) {
+		this.frequency = new Text(frequency);
 	}
 	public void write(DataOutput out) throws IOException {
-		term.write(out);
+		frequency.write(out);
 		document.write(out);
 	}
 
 	public void readFields(DataInput in) throws IOException {
-		term.readFields(in);
+		frequency.readFields(in);
 		document.readFields(in);
 	}
 
-	public int compareTo(TermDocumentKey o) {
-		if(term.compareTo(o.term) == 0) return document.compareTo(o.document);
-		else return term.compareTo(o.term);
+	public int compareTo(DocumentFrequencyValue o) {
+		if(frequency.compareTo(o.frequency) == 0) return document.compareTo(o.document);
+		else return frequency.compareTo(o.frequency);
 	}
 
 	@Override
@@ -58,7 +64,7 @@ public class TermDocumentKey implements WritableComparable<TermDocumentKey> {
 		int result = 1;
 		result = prime * result
 				+ ((document == null) ? 0 : document.hashCode());
-		result = prime * result + ((term == null) ? 0 : term.hashCode());
+		result = prime * result + ((frequency == null) ? 0 : frequency.hashCode());
 		return result;
 	}
 
@@ -70,23 +76,23 @@ public class TermDocumentKey implements WritableComparable<TermDocumentKey> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TermDocumentKey other = (TermDocumentKey) obj;
+		DocumentFrequencyValue other = (DocumentFrequencyValue) obj;
 		if (document == null) {
 			if (other.document != null)
 				return false;
 		} else if (!document.equals(other.document))
 			return false;
-		if (term == null) {
-			if (other.term != null)
+		if (frequency == null) {
+			if (other.frequency != null)
 				return false;
-		} else if (!term.equals(other.term))
+		} else if (!frequency.equals(other.frequency))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return term + "\t" + document;
+		return frequency + "\t" + document;
 	}
 
 }
