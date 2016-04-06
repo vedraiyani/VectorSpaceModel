@@ -28,6 +28,7 @@ public class TFIDFReducer extends Reducer<Text, DocumentFrequencyValue, Text, Te
 				documentList.add(new DocumentFrequencyValue(document, frequency));
 //				documents.add(val.getDocument().toString());
 			}else{
+				//it also exists in query.
 				queryTerm=new DocumentFrequencyValue(document, frequency);
 			}
 		}
@@ -38,9 +39,13 @@ public class TFIDFReducer extends Reducer<Text, DocumentFrequencyValue, Text, Te
 				
 		// count and emit tf*idf for query
 		double tfidf=0;
+		
 		if(queryTerm!=null){
 			tfidf = Double.parseDouble(queryTerm.getFrequency().toString()) * idf;
 			context.write(_key, new Text(queryTerm.getDocument() + "\t" + tfidf));
+		}else{
+			//if not a query term
+			return;
 		}
 		
 		// count and emit tf*idf for documents
