@@ -34,10 +34,18 @@ public class TFIDFReducer extends Reducer<Text, DocumentFrequencyValue, Text, Te
 		
 		// count idf
 		double idf = Math.log10((double) TOTAL_IP_DOCS / documentList.size());
-
-		// count and emit tf*idf
+		
+				
+		// count and emit tf*idf for query
+		double tfidf=0;
+		if(queryTerm!=null){
+			tfidf = Double.parseDouble(queryTerm.getFrequency().toString()) * idf;
+			context.write(_key, new Text(queryTerm.getDocument() + "\t" + tfidf));
+		}
+		
+		// count and emit tf*idf for documents
 		for (DocumentFrequencyValue val : documentList) {
-			double tfidf = Double.parseDouble(val.getFrequency().toString()) * idf;
+			tfidf = Double.parseDouble(val.getFrequency().toString()) * idf;
 			context.write(_key, new Text(val.getDocument() + "\t" + tfidf));
 		}
 
