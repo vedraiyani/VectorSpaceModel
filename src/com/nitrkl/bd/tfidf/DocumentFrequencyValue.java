@@ -53,10 +53,10 @@ public class DocumentFrequencyValue implements Writable {
 		document.readFields(in);
 	}
 
-	public int compareTo(DocumentFrequencyValue o) {
-		if(frequency.compareTo(o.frequency) == 0) return document.compareTo(o.document);
-		else return frequency.compareTo(o.frequency);
-	}
+//	public int compareTo(DocumentFrequencyValue o) {
+//		if(frequency.compareTo(o.frequency) == 0) return document.compareTo(o.document);
+//		else return frequency.compareTo(o.frequency);
+//	}
 
 	@Override
 	public int hashCode() {
@@ -68,27 +68,27 @@ public class DocumentFrequencyValue implements Writable {
 		return result;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		DocumentFrequencyValue other = (DocumentFrequencyValue) obj;
-		if (document == null) {
-			if (other.document != null)
-				return false;
-		} else if (!document.equals(other.document))
-			return false;
-		if (frequency == null) {
-			if (other.frequency != null)
-				return false;
-		} else if (!frequency.equals(other.frequency))
-			return false;
-		return true;
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		DocumentFrequencyValue other = (DocumentFrequencyValue) obj;
+//		if (document == null) {
+//			if (other.document != null)
+//				return false;
+//		} else if (!document.equals(other.document))
+//			return false;
+//		if (frequency == null) {
+//			if (other.frequency != null)
+//				return false;
+//		} else if (!frequency.equals(other.frequency))
+//			return false;
+//		return true;
+//	}
 
 	@Override
 	public String toString() {
