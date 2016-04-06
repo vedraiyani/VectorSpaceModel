@@ -9,7 +9,6 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import com.nitrkl.bd.sc.DocumentQueryTFIDFValue;
 import com.nitrkl.bd.sc.SCMapper;
 import com.nitrkl.bd.sc.SCReducer;
 import com.nitrkl.bd.tf.TFMapper;
