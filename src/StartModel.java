@@ -9,8 +9,10 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import com.nitrkl.bd.query.Query;
 import com.nitrkl.bd.sc.SCMapper;
 import com.nitrkl.bd.sc.SCReducer;
+import com.nitrkl.bd.sc.TermTFIDFKey;
 import com.nitrkl.bd.tf.TFMapper;
 import com.nitrkl.bd.tf.TFReducer;
 import com.nitrkl.bd.tf.TermDocumentKey;
@@ -33,6 +35,12 @@ public class StartModel {
 			return;
 		}
 
+		//set Query
+		new Query("gold silver truck");
+//		Query query=new Query();
+//		query.printMap();
+//		if(true)return;
+		
 		Job tfJob = Job.getInstance(conf, "TF counting");
 		tfJob.setJarByClass(TFMapper.class);
 		// specify mapper
@@ -52,7 +60,7 @@ public class StartModel {
 		Path OPDIR = new Path(args[1]);
 		Path QUERYPATH = new Path("/home/ved/query/q");
 		FileInputFormat.addInputPath(tfJob, IPDIR);
-		FileInputFormat.addInputPath(tfJob, QUERYPATH);
+//		FileInputFormat.addInputPath(tfJob, QUERYPATH);
 		FileOutputFormat.setOutputPath(tfJob, OPDIR);// Delete output if exists
 		FileSystem hdfs = FileSystem.get(conf);
 		if (hdfs.exists(OPDIR)) {
@@ -96,6 +104,7 @@ public class StartModel {
 			}
 		}
 		System.out.println("Total Documents : " + TFIDFReducer.TOTAL_IP_DOCS);
+		
 		// Execute TF job
 		code = tfidfJob.waitForCompletion(true) ? 0 : 1;
 
@@ -106,7 +115,7 @@ public class StartModel {
 		scJob.setMapperClass(SCMapper.class);
 		// specify output types
 		scJob.setMapOutputKeyClass(Text.class);
-		scJob.setMapOutputValueClass(Text.class);
+		scJob.setMapOutputValueClass(TermTFIDFKey.class);
 		// specify reducer
 		scJob.setReducerClass(SCReducer.class);
 		// specify output types

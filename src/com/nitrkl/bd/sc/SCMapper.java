@@ -8,12 +8,12 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 
 
-public class SCMapper extends Mapper<LongWritable, Text, Text, Text> {
+public class SCMapper extends Mapper<LongWritable, Text, Text, TermTFIDFKey> {
 	int i = 0;
 
 	public void map(LongWritable ikey, Text ivalue, Context context) throws IOException, InterruptedException {
 		String[] lineTokens=ivalue.toString().split("\t");
-		context.write(new Text(lineTokens[1]), new Text(lineTokens[2]));
+		context.write(new Text(lineTokens[1]), new TermTFIDFKey(lineTokens[0],lineTokens[2]));
 	}
 
 }
